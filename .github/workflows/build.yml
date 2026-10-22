@@ -14,7 +14,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: android-actions/setup-android@v3
       - name: Build web app
         run: |
           npm install
