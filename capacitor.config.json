@@ -1,0 +1,9 @@
+{
+  "appId": "com.mamulat.yomiya",
+  "appName": "معمولاتِ یومیہ",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#f1f3ee"
+  },
+  "plugins": {}
+}
