@@ -264,6 +264,8 @@ function renderSummary(){
   $("#legend").innerHTML = [["مکمل",st.y,"var(--done)"],["جزوی",st.p,"var(--part)"],["رہ گیا",st.n,"var(--miss)"],["باقی",st.u,"var(--line)"],["لاگو نہیں",st.a,"var(--na)"]]
     .map(([l,v,c]) => `<div><span><i class="dot" style="background:${c}"></i>${l}</span><b>${v}</b></div>`).join("");
   $("#subtitle").textContent = `${st.total} مسنون اعمال کی فہرست`;
+  const tbc = $("#tbCount"); if (tbc){ tbc.textContent = `${st.y} / ${st.active}  ·  ${fmtPct(p)}`; $("#miniArc").style.strokeDashoffset = 94.25 - 94.25 * p / 100;
+    $("#tbLabel").textContent = ui.date === todayIso() ? "آج کے معمولات مکمل" : niceDate(ui.date); }
 }
 function renderHistory(){
   const end = ui.date > todayIso() ? ui.date : todayIso();
@@ -335,18 +337,18 @@ function itemHtml(it, idx){
         <button class="btn small danger" data-act="del">${I.trash}حذف</button>
       </div></div></article>`;
   }
-  const seg = ["y","p","n","a"].map(v => `<button data-act="st" data-v="${v}" aria-pressed="${s===v}" title="${ST[v]}">${v==="y"?I.check:v==="p"?I.half:v==="n"?I.x:"○"}${ST[v]}</button>`).join("");
-  return `<article class="item" data-id="${it.id}" data-st="${s}"><div class="n">${idx+1}</div><div>
-    <p class="txt">${fmtText(it.t, ui.q.trim())}</p>
-    ${it.r ? `<span class="ref">${hl(esc(it.r), ui.q.trim())}</span>` : ""}
-    <div class="row"><div class="seg" role="group" aria-label="کیفیت: معمول نمبر ${idx+1}">${seg}</div>
-      <div class="itools">
-        <button class="iconbtn ${stars.ids[it.id]?"on":""}" data-act="star" title="پسندیدہ" aria-label="پسندیدہ">${stars.ids[it.id]?I.starF:I.star}</button>
-        <button class="iconbtn ${note?"has":""}" data-act="note" title="نوٹ" aria-label="نوٹ">${I.note}</button>
-        ${IMGS[it.id] ? `<button class="iconbtn" data-act="img" title="اصل عکس" aria-label="اصل عکس">${I.img}</button>` : ""}
-      </div></div>
-    <div class="notebox" ${ui.openNotes[it.id]?"":"hidden"}><textarea data-act="notetxt" placeholder="اس دن کے لیے نوٹ">${esc(note)}</textarea></div>
-  </div></article>`;
+  const pill = s && s !== "y" ? `<span class="spill ${s}">${ST[s]}</span>` : "";
+  const icon = s==="y"?I.check:s==="p"?I.half:s==="n"?I.x:s==="a"?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 12h12"/></svg>':I.check;
+  const open = ui.expanded && ui.expanded[it.id];
+  return `<article class="item m2" data-id="${it.id}" data-st="${s}">
+    <button class="chk" data-act="tick" aria-pressed="${s==="y"}" aria-label="${s?ST[s]:"مکمل کریں"} — دبائے رکھیں: مزید اختیارات">${icon}</button>
+    <div class="ibody">
+      <p class="txt ${open?"":"clamp"}">${fmtText(it.t, ui.q.trim())}</p>
+      <div class="imeta"><button class="more-txt" data-act="expand" hidden>${open?"کم دکھائیں":"مزید پڑھیں"}</button><span class="num">#${idx+1}</span>${pill}${stars.ids[it.id]?`<span class="ic">${I.starF}</span>`:""}${note?`<span class="ic note">${I.note}</span>`:""}${it.r && open ? `<span class="ref">${hl(esc(it.r), ui.q.trim())}</span>` : ""}</div>
+      <div class="notebox" ${ui.openNotes[it.id]?"":"hidden"}><textarea data-act="notetxt" placeholder="اس دن کے لیے نوٹ">${esc(note)}</textarea></div>
+    </div>
+    <button class="iconbtn kebab" data-act="menu" aria-label="مزید اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
+  </article>`;
 }
 function renderList(){
   const list = items();
@@ -363,8 +365,8 @@ function renderList(){
       const closed = !ui.edit && !filtering && prefs.closed[c.id];
       const head = ui.edit
         ? `<input data-cact="name" value="${esc(c.name)}" aria-label="زمرے کا نام"><button class="iconbtn" data-cact="up" aria-label="زمرہ اوپر">${I.up}</button><button class="iconbtn" data-cact="down" aria-label="زمرہ نیچے">${I.down}</button><button class="btn small danger" data-cact="del">${I.trash}زمرہ حذف</button>`
-        : `<button class="iconbtn collapse" data-cact="toggle" aria-label="کھولیں/بند کریں" aria-expanded="${!closed}">${I.chev}</button><h3>${esc(c.name)}</h3><span class="prog">${st.y}/${st.active}</span><button class="btn small" data-cact="allyes" title="اس زمرے کے باقی سب معمولات مکمل کریں">سب مکمل</button>`;
-      html += `<section class="sec ${closed?"closed":""}" data-cat="${c.id}"><div class="sec-h">${head}</div><div class="sec-body">${shown.map(it => itemHtml(it, index.get(it.id))).join("")}${ui.edit?`<button class="addbtn" data-cact="add">+ اس زمرے میں نیا معمول</button>`:""}</div></section>`;
+        : `<button class="iconbtn collapse" data-cact="toggle" aria-label="کھولیں/بند کریں" aria-expanded="${!closed}">${I.chev}</button><h3>${esc(c.name)}</h3>${isNowCat(c.id)?'<span class="now-badge">ابھی کا وقت</span>':""}<span class="prog">${st.y}/${st.active}</span><button class="btn small" data-cact="allyes" title="اس زمرے کے باقی سب معمولات مکمل کریں">سب مکمل</button>`;
+      html += `<section class="sec ${closed?"closed":""} ${isNowCat(c.id)?"now":""}" data-cat="${c.id}"><div class="sec-h">${head}</div><div class="sec-body">${shown.map(it => itemHtml(it, index.get(it.id))).join("")}${ui.edit?`<button class="addbtn" data-cact="add">+ اس زمرے میں نیا معمول</button>`:""}</div></section>`;
     }
     if (ui.edit) html += `<button class="addbtn" id="addCat">+ نیا زمرہ بنائیں</button>`;
   } else {
@@ -374,6 +376,7 @@ function renderList(){
   }
   if (!html) html = `<div class="empty"><h3>کوئی معمول نہیں ملا</h3><p>تلاش یا فلٹر تبدیل کریں، یا مکمل فہرست پر واپس جائیں۔</p><button class="btn primary" data-resetfilters>تمام معمولات دکھائیں</button></div>`;
   $("#list").innerHTML = html;
+  markClamps();
   const allClosed = cfg.cats.length && cfg.cats.every(c => prefs.closed[c.id]);
   $("#collapseAllBtn").textContent = allClosed ? "زمرے کھولیں" : "زمرے بند کریں";
   $("#collapseAllBtn").hidden = !CATS_ON || ui.edit || !!ui.q.trim() || ui.status !== "all";
@@ -446,7 +449,7 @@ function setStatus(id, v){
   touchDay(ui.date);
   const el = document.querySelector(`.item[data-id="${CSS.escape(id)}"]`);
   const idx = items().findIndex(it => it.id === id);
-  if (el && ui.status === "all" && idx >= 0) el.outerHTML = itemHtml(items()[idx], idx);
+  if (el && ui.status === "all" && idx >= 0){ el.outerHTML = itemHtml(items()[idx], idx); markClamps(); }
   else renderList();
   refreshCounts();
 }
@@ -905,5 +908,104 @@ document.addEventListener("keydown",e => {
   }
 });
 
+
+/* ---------- v3: one-tap marking, item menu, text clamp, time-of-day sections, summary sheet ---------- */
+ui.expanded = {};
+const TIME_SECTIONS = [ // [from minute-of-day, to, category ids]
+  [180, 300, ["tahajjud"]], [300, 390, ["prep","fajr"]], [390, 480, ["ishraq","ishraq_chaasht"]],
+  [480, 750, ["ishraq_chaasht","work"]], [750, 930, ["zuhr","food"]], [930, 1065, ["asr"]],
+  [1065, 1170, ["maghrib"]], [1170, 1320, ["isha"]], [1320, 1440, ["sleep"]], [0, 180, ["sleep"]]
+];
+function nowCats(){
+  const d = new Date(), m = d.getHours()*60 + d.getMinutes();
+  const hit = TIME_SECTIONS.find(([a,b]) => m >= a && m < b);
+  return (hit ? hit[2] : []).filter(id => cfg.cats.some(c => c.id === id));
+}
+function isNowCat(id){ return CATS_ON && ui.date === todayIso() && nowCats().includes(id); }
+function markClamps(){
+  requestAnimationFrame(() => document.querySelectorAll("#list .item.m2").forEach(el => {
+    const t = el.querySelector(".txt"), b = el.querySelector(".more-txt"); if (!t || !b) return;
+    const open = ui.expanded[el.dataset.id];
+    b.hidden = !open && t.scrollHeight <= t.clientHeight + 3;
+  }));
+}
+function haptic(){ try{ if (window.__haptic) window.__haptic(); else if (navigator.vibrate) navigator.vibrate(12); }catch(e){} }
+function tick(id){
+  const cur = statusOf(id);
+  setStatus(id, "y"); // tapping a done item again clears it
+  if (cur !== "y") { haptic(); const c = document.querySelector(`.item[data-id="${CSS.escape(id)}"] .chk`); if (c) c.classList.add("pop"); celebrate(id); }
+}
+function celebrate(id){
+  const it = items().find(x => x.id === id); if (!it || !CATS_ON) return;
+  const st = stats(items().filter(x => x.c === it.c));
+  if (st.active && st.y === st.active) toast(`ما شاء اللہ! «${catName(it.c)}» مکمل ہو گیا`);
+}
+function openItemMenu(id){
+  const it = items().find(x => x.id === id); if (!it) return;
+  const idx = items().indexOf(it), s = statusOf(id), note = (dayRec(ui.date).notes||{})[id];
+  const sb = (v, cls, label) => `<button class="${cls}" data-m-st="${v}" aria-pressed="${s===v}">${label}</button>`;
+  modal(`معمول #${idx+1}`, `<p class="act-preview">${esc(it.t)}</p>
+    <div class="act-grid">${sb("y","y","✓ مکمل")}${sb("p","p","◐ جزوی")}${sb("n","n","✕ رہ گیا")}${sb("a","a","○ لاگو نہیں")}</div>
+    <div class="act-list">
+      ${s ? `<button data-m="clear">${I.close}نشان ہٹائیں</button>` : ""}
+      <button data-m="star">${stars.ids[id]?I.starF:I.star}${stars.ids[id]?"پسندیدہ سے ہٹائیں":"پسندیدہ میں شامل کریں"}</button>
+      <button data-m="note">${I.note}${note?"نوٹ دیکھیں / بدلیں":"اس دن کا نوٹ لکھیں"}</button>
+      ${IMGS[id] ? `<button data-m="img">${I.img}اصل عکس دیکھیں</button>` : ""}
+    </div>`, (ov, close) => {
+    ov.addEventListener("click", e => {
+      const b = e.target.closest("[data-m-st],[data-m]"); if (!b) return;
+      close();
+      if (b.dataset.mSt){ if (statusOf(id) !== b.dataset.mSt){ setStatus(id, b.dataset.mSt); haptic(); if (b.dataset.mSt === "y") celebrate(id); } return; }
+      const m = b.dataset.m;
+      if (m === "clear"){ setStatus(id, statusOf(id)); }
+      if (m === "star"){ if (stars.ids[id]) delete stars.ids[id]; else stars.ids[id] = true; stars.u = Date.now(); persist("stars"); rerenderItem(id); renderStatusChips(); }
+      if (m === "note"){ ui.openNotes[id] = true; rerenderItem(id); const ta = document.querySelector(`.item[data-id="${CSS.escape(id)}"] .notebox textarea`); if (ta) ta.focus(); }
+      if (m === "img"){ modal("اصل عکس (ایکسل سے)", `<div class="imgwrap"><img src="${IMGS[id]}" alt="اصل متن کا عکس"></div><p class="muted" style="margin-top:10px">ٹائپ شدہ متن میں کوئی غلطی نظر آئے تو "ترمیم" سے درست کر لیں۔</p>`); }
+    });
+  });
+}
+function rerenderItem(id){
+  const el = document.querySelector(`.item[data-id="${CSS.escape(id)}"]`);
+  const idx = items().findIndex(x => x.id === id);
+  if (el && idx >= 0){ el.outerHTML = itemHtml(items()[idx], idx); markClamps(); }
+}
+// Tap = done / undo; long-press the circle = full options.
+let lpTimer = null, lpFired = false;
+list.addEventListener("pointerdown", e => {
+  const c = e.target.closest(".chk"); if (!c || ui.edit) return;
+  lpFired = false; clearTimeout(lpTimer);
+  lpTimer = setTimeout(() => { lpFired = true; haptic(); openItemMenu(c.closest(".item").dataset.id); }, 520);
+});
+["pointerup","pointercancel","pointerleave"].forEach(t => list.addEventListener(t, () => clearTimeout(lpTimer)));
+list.addEventListener("contextmenu", e => { if (e.target.closest(".chk")) e.preventDefault(); });
+list.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const item = b.closest(".item"); if (!item) return;
+  const id = item.dataset.id, a = b.dataset.act;
+  if (a === "tick"){ if (lpFired){ lpFired = false; return; } tick(id); }
+  if (a === "menu") openItemMenu(id);
+  if (a === "expand"){ ui.expanded[id] = !ui.expanded[id]; rerenderItem(id); }
+});
+// Summary sheet on phones
+function openSheet(){ $("#side").classList.add("sheet"); $("#sheetBackdrop").classList.add("on"); }
+function closeSheet(){ $("#side").classList.remove("sheet"); $("#sheetBackdrop").classList.remove("on"); }
+$("#todayBar").addEventListener("click", openSheet);
+$("#sheetClose").addEventListener("click", closeSheet);
+$("#sheetBackdrop").addEventListener("click", closeSheet);
+$("#hist").addEventListener("click", e => { if (e.target.closest("[data-d]")) closeSheet(); });
+// Open the sections for the current time of day (once per day; your own open/close choices are kept after that)
+function applyTimeOfDay(scroll){
+  if (!CATS_ON) return;
+  const today = todayIso();
+  if (prefs.autoDay === today) return;
+  const now = nowCats(); if (!now.length) return;
+  cfg.cats.forEach(c => prefs.closed[c.id] = !now.includes(c.id));
+  prefs.autoDay = today; lsSet("prefs", prefs);
+  renderList();
+  if (scroll) requestAnimationFrame(() => { const s = document.querySelector(".sec.now"); if (s) s.scrollIntoView({block:"start"}); });
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && ui.date === todayIso()) applyTimeOfDay(false); });
+
 renderAll();
+applyTimeOfDay(true);
 initCloud();

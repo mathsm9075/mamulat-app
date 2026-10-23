@@ -473,6 +473,67 @@ body{background:var(--bg);font-size:15px;line-height:1.8;min-width:310px;padding
   .category-chooser{gap:8px;padding:9px 10px}
   .category-chooser label{font-size:12px}
 }
+
+/* ===== v3: compact, one-tap layout ===== */
+.hero{display:none!important}
+.todaybar{display:none}
+.sheet-close,.sheet-backdrop{display:none}
+.item.m2{grid-template-columns:44px minmax(0,1fr) 34px;align-items:start;gap:10px;padding:12px 12px 10px 8px}
+.item.m2::before{display:none}
+.chk{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;color:transparent;cursor:pointer;transition:transform .12s,background .15s,border-color .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.chk svg{width:22px;height:22px}
+.chk:active{transform:scale(.9)}
+.item[data-st="y"] .chk{background:var(--done);border-color:var(--done);color:#fff}
+.item[data-st="p"] .chk{background:var(--part-soft);border-color:var(--part);color:var(--part)}
+.item[data-st="n"] .chk{background:var(--miss-soft);border-color:var(--miss);color:var(--miss)}
+.item[data-st="a"] .chk{background:var(--surface-2);border-color:var(--ink-3);color:var(--ink-3)}
+.chk.pop{animation:chkPop .32s ease-out}
+@keyframes chkPop{0%{transform:scale(.8)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.ibody{min-width:0}
+.item.m2 .txt{margin:0}
+.item.m2 .txt.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.item.m2[data-st="y"] .txt{color:var(--ink-3)}
+.more-txt{border:0;background:none;color:var(--accent);font:inherit;font-size:13px;font-weight:700;padding:2px 0;cursor:pointer}
+.imeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:4px;font-size:12px;color:var(--ink-3)}
+.imeta .num{font-family:system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.imeta .ref{margin:0;font-size:12px}
+.spill{border-radius:999px;padding:1px 9px;font-weight:700;font-size:11.5px}
+.spill.p{background:var(--part-soft);color:var(--part)}
+.spill.n{background:var(--miss-soft);color:var(--miss)}
+.spill.a{background:var(--surface-2);color:var(--ink-2)}
+.imeta .ic{display:inline-flex;color:var(--star)}
+.imeta .ic.note{color:var(--accent)}
+.imeta .ic svg{width:14px;height:14px}
+.kebab{width:34px;height:34px;color:var(--ink-3)}
+.now-badge{font-size:11px;font-weight:800;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.sec{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 130px)}
+.sec.now .sec-h{border-bottom-color:var(--accent)}
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.act-grid button{display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:12px 8px;font:inherit;font-weight:700;cursor:pointer}
+.act-grid button[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:-2px}
+.act-grid .y{color:var(--done)}.act-grid .p{color:var(--part)}.act-grid .n{color:var(--miss)}.act-grid .a{color:var(--ink-2)}
+.act-list{display:grid;gap:6px;margin-top:12px}
+.act-list button{display:flex;align-items:center;gap:10px;border:0;background:var(--surface-2);color:var(--ink);border-radius:10px;padding:11px 14px;font:inherit;text-align:right;cursor:pointer}
+.act-list svg{width:18px;height:18px;flex:none}
+.act-preview{font-family:var(--f-urdu);line-height:2.1;font-size:15px;color:var(--ink-2);margin:0 0 12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media (max-width:979px){
+  .side{display:none!important}
+  .side.sheet{display:grid!important;position:fixed;z-index:75;left:0;right:0;bottom:0;max-height:86vh;overflow:auto;background:var(--bg);border-radius:20px 20px 0 0;padding:14px max(16px,env(safe-area-inset-left,0px)) calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.18);grid-template-columns:1fr;gap:12px}
+  .side.sheet .panel:nth-child(2){display:block!important}
+  .side.sheet .sheet-close{order:-1;display:block;justify-self:center;border:0;background:var(--surface-2);color:var(--ink-2);border-radius:999px;padding:6px 18px;font:inherit;font-weight:700}
+  .sheet-backdrop.on{display:block;position:fixed;inset:0;z-index:74;background:rgba(10,15,13,.42)}
+  .todaybar{display:flex;align-items:center;gap:12px;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;padding:10px 14px;margin-bottom:12px;font:inherit;text-align:right;cursor:pointer}
+  .todaybar svg{width:40px;height:40px;transform:rotate(-90deg);flex:none}
+  .tb-text{display:grid;flex:1;min-width:0;line-height:1.35}
+  .tb-text b{direction:ltr;text-align:right;font-family:system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:17px}
+  .tb-text small{color:var(--ink-3);font-size:12px}
+  .tb-more{color:var(--accent);font-weight:700;font-size:13px;white-space:nowrap}
+  .tools .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1 1 100%;padding-bottom:2px}
+  .tools .chips::-webkit-scrollbar{display:none}
+  .item.m2{grid-template-columns:40px minmax(0,1fr) 30px;padding:10px 10px 9px 6px;gap:8px}
+  .chk{width:36px;height:36px}
+  .kebab{width:30px;height:30px}
+}
 </style>
 </head><body>
 
@@ -499,7 +560,7 @@ body{background:var(--bg);font-size:15px;line-height:1.8;min-width:310px;padding
 </header>
 
 <div class="page">
-  <aside class="side">
+  <aside class="side" id="side">
     <section class="panel" aria-label="آج کا خلاصہ">
       <div class="score">
         <div class="ring">
@@ -529,9 +590,15 @@ body{background:var(--bg);font-size:15px;line-height:1.8;min-width:310px;padding
       <h2>زمرے</h2>
       <div class="secnav" id="secnav"></div>
     </section>
+    <button class="sheet-close" id="sheetClose">بند کریں</button>
   </aside>
 
   <main class="main" id="mainContent">
+    <button class="todaybar" id="todayBar" aria-label="آج کا خلاصہ کھولیں">
+      <svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-2)" stroke-width="4"/><circle id="miniArc" cx="18" cy="18" r="15" fill="none" stroke="var(--done)" stroke-width="4" stroke-linecap="round" stroke-dasharray="94.25" stroke-dashoffset="94.25" style="transition:stroke-dashoffset .4s"/></svg>
+      <span class="tb-text"><b id="tbCount">0 / 0</b><small id="tbLabel">آج کے معمولات مکمل</small></span>
+      <span class="tb-more">خلاصہ ›</span>
+    </button>
     <section class="hero" aria-label="روزانہ رہنمائی">
       <div class="hero-decoration" aria-hidden="true"><svg viewBox="0 0 220 220" fill="none"><path d="M110 12l25 57 61-15-32 55 44 43-62 1-36 55-25-58-61 15 32-55L12 67l63-1z" stroke="currentColor" stroke-width="1.1"/><circle cx="110" cy="110" r="66" stroke="currentColor" stroke-width="1.1"/><circle cx="110" cy="110" r="36" stroke="currentColor" stroke-width="1.1"/></svg></div>
       <div class="hero-intro"><div class="eyebrow"><span class="spark">✦</span> <span id="heroDate"></span></div>
@@ -568,6 +635,7 @@ body{background:var(--bg);font-size:15px;line-height:1.8;min-width:310px;padding
   </main>
 </div>
 
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="undo-toast" id="undoToast" hidden role="status" aria-live="polite"><span id="undoText">تبدیلی محفوظ ہوگئی</span><button id="undoBtn">واپس کریں</button></div>
 <nav class="mobile-dock" aria-label="فوری نیویگیشن">

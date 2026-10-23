@@ -3,6 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { App } from '@capacitor/app';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 const PREFIX = 'mamulat.v2.cats.';
 const FIELDS = ['cfg', 'recs', 'stars', 'prefs', 'tas'];
@@ -10,6 +11,9 @@ const filePath = field => `state/${field}.json`;
 const queues = new Map();
 
 if (Capacitor.isNativePlatform()) {
+  // Light tap feedback when an item is marked.
+  window.__haptic = () => { Haptics.impact({ style: ImpactStyle.Light }).catch(() => {}); };
+
   // Android back button: close the open book/library first, exit only from the main screen.
   App.addListener('backButton', ({ canGoBack }) => { if (canGoBack) history.back(); else App.exitApp(); });
 
