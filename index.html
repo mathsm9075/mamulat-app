@@ -504,8 +504,9 @@ body{background:var(--bg);font-size:15px;line-height:1.8;min-width:310px;padding
 .imeta .ic{display:inline-flex;color:var(--star)}
 .imeta .ic.note{color:var(--accent)}
 .imeta .ic svg{width:14px;height:14px}
-.qst{display:inline-flex;gap:5px;margin-inline-start:auto}
-.qst button{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:3px 10px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;line-height:1.6}
+.qst{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
+.qst button{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:4px 4px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;line-height:1.6}
+.qst button[data-v="y"][aria-pressed="true"]{background:var(--done);border-color:var(--done);color:#fff}
 .qst button[data-v="p"][aria-pressed="true"]{background:var(--part);border-color:var(--part);color:#fff}
 .qst button[data-v="n"][aria-pressed="true"]{background:var(--miss);border-color:var(--miss);color:#fff}
 .qst button[data-v="a"][aria-pressed="true"]{background:var(--ink-3);border-color:var(--ink-3);color:#fff}

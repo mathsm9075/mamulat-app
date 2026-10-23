@@ -344,7 +344,8 @@ function itemHtml(it, idx){
     <div class="ibody">
       <p class="txt ${open?"":"clamp"}">${fmtText(it.t, ui.q.trim())}</p>
       <div class="imeta"><button class="more-txt" data-act="expand" hidden>${open?"کم دکھائیں":"مزید پڑھیں"}</button><span class="num">#${idx+1}</span>${stars.ids[it.id]?`<span class="ic">${I.starF}</span>`:""}${note?`<span class="ic note">${I.note}</span>`:""}${it.r && open ? `<span class="ref">${hl(esc(it.r), ui.q.trim())}</span>` : ""}
-        <span class="qst" role="group" aria-label="کیفیت">${[["p","◐ جزوی"],["n","✕ رہ گیا"],["a","○ لاگو نہیں"]].map(([v,l]) => `<button data-act="st" data-v="${v}" aria-pressed="${s===v}">${l}</button>`).join("")}</span></div>
+</div>
+      <div class="qst" role="group" aria-label="کیفیت">${[["y","✓ مکمل"],["p","◐ جزوی"],["n","✕ رہ گیا"],["a","○ لاگو نہیں"]].map(([v,l]) => `<button data-act="st" data-v="${v}" aria-pressed="${s===v}">${l}</button>`).join("")}</div>
       <div class="notebox" ${ui.openNotes[it.id]?"":"hidden"}><textarea data-act="notetxt" placeholder="اس دن کے لیے نوٹ">${esc(note)}</textarea></div>
     </div>
     <button class="iconbtn kebab" data-act="menu" aria-label="مزید اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
