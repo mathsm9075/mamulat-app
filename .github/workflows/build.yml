@@ -2,6 +2,8 @@ name: Build APK
 on:
   push:
   workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,6 +16,25 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      - name: Get PDF books from the "books" release (if it exists)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p public/books/sunnah public/books/silsilah dl
+          if gh release view books >/dev/null 2>&1; then
+            gh release download books -D dl --pattern '*.pdf' --pattern '*.PDF' || true
+            for f in dl/*; do
+              [ -f "$f" ] || continue
+              n=$(basename "$f")
+              case "$(echo "$n" | tr 'A-Z' 'a-z')" in
+                silsilah*) mv "$f" public/books/silsilah/ ;;
+                *) mv "$f" public/books/sunnah/ ;;
+              esac
+            done
+          else
+            echo "No release named 'books' yet - building without release books."
+          fi
+          ls -la public/books/sunnah public/books/silsilah
       - name: Build web app
         run: |
           npm install
@@ -23,6 +44,8 @@ jobs:
           npx cap add android
           cp -r android_branding/res/* android/app/src/main/res/
           rm -f android/app/src/main/res/drawable-v24/ic_launcher_foreground.xml
+          # Store PDFs uncompressed so large books open page by page instead of loading whole
+          printf '\nandroid { androidResources { noCompress "pdf" } }\n' >> android/app/build.gradle
       - name: Use the project's fixed signing key (so updates install over the old app)
         run: |
           mkdir -p ~/.android
