@@ -504,6 +504,12 @@ body{background:var(--bg);font-size:15px;line-height:1.8;min-width:310px;padding
 .imeta .ic{display:inline-flex;color:var(--star)}
 .imeta .ic.note{color:var(--accent)}
 .imeta .ic svg{width:14px;height:14px}
+.qst{display:inline-flex;gap:5px;margin-inline-start:auto}
+.qst button{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:3px 10px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;line-height:1.6}
+.qst button[data-v="p"][aria-pressed="true"]{background:var(--part);border-color:var(--part);color:#fff}
+.qst button[data-v="n"][aria-pressed="true"]{background:var(--miss);border-color:var(--miss);color:#fff}
+.qst button[data-v="a"][aria-pressed="true"]{background:var(--ink-3);border-color:var(--ink-3);color:#fff}
+.imeta{row-gap:8px}
 .kebab{width:34px;height:34px;color:var(--ink-3)}
 .now-badge{font-size:11px;font-weight:800;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 9px;white-space:nowrap}
 .sec{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 130px)}

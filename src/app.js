@@ -337,14 +337,14 @@ function itemHtml(it, idx){
         <button class="btn small danger" data-act="del">${I.trash}حذف</button>
       </div></div></article>`;
   }
-  const pill = s && s !== "y" ? `<span class="spill ${s}">${ST[s]}</span>` : "";
   const icon = s==="y"?I.check:s==="p"?I.half:s==="n"?I.x:s==="a"?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 12h12"/></svg>':I.check;
   const open = ui.expanded && ui.expanded[it.id];
   return `<article class="item m2" data-id="${it.id}" data-st="${s}">
     <button class="chk" data-act="tick" aria-pressed="${s==="y"}" aria-label="${s?ST[s]:"مکمل کریں"} — دبائے رکھیں: مزید اختیارات">${icon}</button>
     <div class="ibody">
       <p class="txt ${open?"":"clamp"}">${fmtText(it.t, ui.q.trim())}</p>
-      <div class="imeta"><button class="more-txt" data-act="expand" hidden>${open?"کم دکھائیں":"مزید پڑھیں"}</button><span class="num">#${idx+1}</span>${pill}${stars.ids[it.id]?`<span class="ic">${I.starF}</span>`:""}${note?`<span class="ic note">${I.note}</span>`:""}${it.r && open ? `<span class="ref">${hl(esc(it.r), ui.q.trim())}</span>` : ""}</div>
+      <div class="imeta"><button class="more-txt" data-act="expand" hidden>${open?"کم دکھائیں":"مزید پڑھیں"}</button><span class="num">#${idx+1}</span>${stars.ids[it.id]?`<span class="ic">${I.starF}</span>`:""}${note?`<span class="ic note">${I.note}</span>`:""}${it.r && open ? `<span class="ref">${hl(esc(it.r), ui.q.trim())}</span>` : ""}
+        <span class="qst" role="group" aria-label="کیفیت">${[["p","◐ جزوی"],["n","✕ رہ گیا"],["a","○ لاگو نہیں"]].map(([v,l]) => `<button data-act="st" data-v="${v}" aria-pressed="${s===v}">${l}</button>`).join("")}</span></div>
       <div class="notebox" ${ui.openNotes[it.id]?"":"hidden"}><textarea data-act="notetxt" placeholder="اس دن کے لیے نوٹ">${esc(note)}</textarea></div>
     </div>
     <button class="iconbtn kebab" data-act="menu" aria-label="مزید اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
