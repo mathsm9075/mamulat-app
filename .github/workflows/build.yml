@@ -35,6 +35,17 @@ jobs:
             echo "No release named 'books' yet - building without release books."
           fi
           ls -la public/books/sunnah public/books/silsilah
+      - name: Shrink PDF books for phone screens (keeps a copy only if it is smaller)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ghostscript >/dev/null
+          for f in public/books/*/*.pdf public/books/*/*.PDF; do
+            [ -f "$f" ] || continue
+            gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dPDFSETTINGS=/ebook \
+               -dColorImageResolution=130 -dGrayImageResolution=130 -dMonoImageResolution=300 \
+               -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$f.small" "$f" || { rm -f "$f.small"; continue; }
+            a=$(stat -c%s "$f"); b=$(stat -c%s "$f.small")
+            if [ "$b" -lt "$a" ]; then mv "$f.small" "$f"; echo "$(basename "$f"): $((a/1048576)) MB -> $((b/1048576)) MB"; else rm -f "$f.small"; echo "$(basename "$f"): kept original"; fi
+          done
       - name: Build web app
         run: |
           npm install
