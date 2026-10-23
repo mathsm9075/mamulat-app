@@ -2,6 +2,7 @@
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import { App } from '@capacitor/app';
 
 const PREFIX = 'mamulat.v2.cats.';
 const FIELDS = ['cfg', 'recs', 'stars', 'prefs', 'tas'];
@@ -9,6 +10,9 @@ const filePath = field => `state/${field}.json`;
 const queues = new Map();
 
 if (Capacitor.isNativePlatform()) {
+  // Android back button: close the open book/library first, exit only from the main screen.
+  App.addListener('backButton', ({ canGoBack }) => { if (canGoBack) history.back(); else App.exitApp(); });
+
   // DOM localStorage is still the fast synchronous UI store. Android's private
   // Filesystem mirror can restore it if Android WebView storage is reclaimed.
   for (const field of FIELDS) {
@@ -61,3 +65,4 @@ if (Capacitor.isNativePlatform()) {
 
 // Dynamic import deliberately runs after native restoration.
 await import('./app.js');
+await import('./books.js');
