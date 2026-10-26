@@ -945,7 +945,7 @@ function openItemMenu(id){
   const it = items().find(x => x.id === id); if (!it) return;
   const idx = items().indexOf(it), s = statusOf(id), note = (dayRec(ui.date).notes||{})[id];
   const sb = (v, cls, label) => `<button class="${cls}" data-m-st="${v}" aria-pressed="${s===v}">${label}</button>`;
-  modal(`معمول #${idx+1}`, `<p class="act-preview">${esc(it.t)}</p>
+  modal(`معمول نمبر ${idx+1}`, `<div class="act-preview"><p class="txt">${fmtText(it.t, "")}</p>${it.r ? `<span class="ref">${esc(it.r)}</span>` : ""}</div>
     <div class="act-grid">${sb("y","y","✓ مکمل")}${sb("p","p","◐ جزوی")}${sb("n","n","✕ رہ گیا")}${sb("a","a","○ لاگو نہیں")}</div>
     <div class="act-list">
       ${s ? `<button data-m="clear">${I.close}نشان ہٹائیں</button>` : ""}
@@ -986,6 +986,12 @@ list.addEventListener("click", e => {
   if (a === "tick"){ if (lpFired){ lpFired = false; return; } tick(id); }
   if (a === "menu") openItemMenu(id);
   if (a === "expand"){ ui.expanded[id] = !ui.expanded[id]; rerenderItem(id); }
+});
+list.addEventListener("click", e => {
+  const t = e.target.closest(".item.m2 .txt"); if (!t || ui.edit) return;
+  if (window.getSelection && String(window.getSelection()).length) return;
+  const item = t.closest(".item"), b = item.querySelector(".more-txt");
+  if (b && !b.hidden){ ui.expanded[item.dataset.id] = !ui.expanded[item.dataset.id]; rerenderItem(item.dataset.id); }
 });
 // Summary sheet on phones
 function openSheet(){ $("#side").classList.add("sheet"); $("#sheetBackdrop").classList.add("on"); }
